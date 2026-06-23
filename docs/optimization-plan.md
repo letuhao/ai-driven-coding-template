@@ -90,18 +90,32 @@ Resolved. Extraction proceeds only after review.
 
 ### Dimension 4 + 3 — `ai/` and `workflows/` (the workflow toolkit)
 
-The workflow layer is a **tiered toolkit**, not a single workflow. `/loom` is the
-default; the others escalate from it. All share one substrate: a **CLAUDE.md "Task
-Workflow" SSOT** + **`workflow-gate`** enforcement + the `review-impl` review step.
-Generalize the *substrate first*, then each tier as a command on top of it.
+The workflow layer is a **2×2 toolkit**, not a single workflow. `/loom` is the
+default; the others are points on two axes — **serial↔parallel** and
+**human-gated↔autonomous**. All share one substrate: a **CLAUDE.md "Task Workflow"
+SSOT** + **`workflow-gate`** enforcement (incl. the `slices` subcommand warp uses) +
+the `review-impl` review step + `amaw`'s cold-start **roles** (Adversary / Scope Guard /
+Healer) reused by warp and raid. Generalize the *substrate first*, then each mode.
+
+```
+                 Serial             Parallel fan-out
+Human-gated      loom (+amaw)       warp
+Autonomous       (amaw-auto, rare)  raid
+```
+
+**Key for the template:** `warp` makes *execution* conflict-free for concurrent
+multi-module work (provably-disjoint write-sets, frozen interface pinned by git blob
+sha, worktree-isolated slices, conflict ⇒ HALT_REDESIGN). This is the **execution-side
+twin** of the DLF Paperwork Standard's conflict-free *state* model — same goal (many
+agents × many modules, no conflict), two layers.
 
 | Tier | Source asset | Usage | Generalized entry | Generalize / strip |
 |---|---|---|---|---|
 | **substrate** | CLAUDE.md "Task Workflow" + `scripts/workflow-gate.{sh,py}` + `.workflow-state.json` | always | `workflows/loom/gate/` + `ai/rules/task-workflow.md` (the SSOT) | The 12-phase model + size table + anti-skip gate are the core. Strip repo-specific service notes. |
 | **`/loom`** (primary) | `.claude/commands/loom.md` | almost always | `ai/agents/claude-code/commands/loom.md` | 12-phase human-in-loop, size-classified, PO checkpoints. Strip monorepo/service specifics; parameterize handoff paths. |
 | **`/raid`** (long runs) | `.claude/commands/raid.md` + `.raid/active-task.yaml` + `scripts/raid/*` + `docs/raid/*` | long runs | `workflows/raid/` (autonomous coordinator) | Generalize cycle log, briefs, quota governance, per-branch `active-task.yaml`, escalations, resume semantics. |
-| **`warp`** ("more control") | **not yet created in any repo** (user confirmed uncommitted/absent) | frequent-ish | TBD — capture once defined | Pending: user to describe what "more control" means vs loom/raid before it can be generalized. |
-| **`/amaw`** (rare deepening) | `.claude/commands/amaw.md` + `agentic-workflow/` | rarely, opt-in | `ai/agents/claude-code/commands/amaw.md` | Position as an L+ load-bearing escalation invoked *inside* loom — NOT the headline workflow. |
+| **`/warp`** (parallel, human-gated) | `.claude/commands/warp.md` + spec `docs/specs/2026-06-12-warp-parallel-mode.md` + `scripts/warp/*` (worktrees.py, slice-runner-prompt, slice-manifest-validate) + `docs/warp/EXAMPLE-manifest.yaml` | M/L/XL decomposable tasks where wall-clock matters | `workflows/warp/` (parallel-execution mode) | Generalize: slice manifest + `--verify-frozen` gate, frozen-interface-by-sha, BASE_SHA pinning + self-heal, disjointness-dividend reconcile, HALT_REDESIGN. Keep the Windows-`python` note as a portability lesson. Falls back to `/loom`. |
+| **`/amaw`** (deepening roles) | `.claude/commands/amaw.md` + `docs/amaw-workflow.md` | rarely, opt-in | `ai/agents/claude-code/commands/amaw.md` + `ai/prompts/roles/` | Not a standalone workflow — it supplies cold-start **roles** (Adversary, Scope Guard, Healer) that loom/warp/raid invoke. Position as an L+ load-bearing overlay. |
 | shared | `.claude` / `.cursor` / `.kiro` coexistence; `review-impl` | — | `ai/agents/<tool>/`; `ai/rules/` + `ai/prompts/` as shared source | Extract common rules from the three CLAUDE.md files; flag CLAUDE.md size growth as drift (keep rules small/composable). |
 
 ### Dimension 3 — `workflows/` (contracts)
@@ -138,8 +152,9 @@ Generalize the *substrate first*, then each tier as a command on top of it.
 ## Sequencing (after this plan is approved)
 
 1. `documents/` spine — paperwork standard + taxonomy + glossary (neutralized).
-2. Workflow toolkit into `ai/` + `workflows/`: substrate (gate + Task-Workflow SSOT)
-   → `/loom` (primary) → `/raid` (long-run) → `/amaw` (rare). Slot `warp` in once defined.
+2. Workflow toolkit into `ai/` + `workflows/`: substrate (gate inc. `slices` +
+   Task-Workflow SSOT + amaw roles) → `/loom` (serial, primary) → `/warp` (parallel) →
+   `/raid` (autonomous long-run). amaw roles extracted once, reused by all three.
 3. Contract-first `workflows/contracts/`.
 4. Language templates (Go, TS) + architecture skeletons.
 5. Adoption guides + Maturity-Tier gating in `docs/choosing.md`.
