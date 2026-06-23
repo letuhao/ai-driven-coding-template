@@ -1,0 +1,113 @@
+# Standards optimization plan
+
+How we turn three mature repos into generalized, drop-in template standards.
+**This is a plan, not the extraction** — nothing under the catalogs changes until
+this is reviewed. Decisions here feed back into [`decisions.md`](decisions.md).
+
+## Sources
+
+| Repo | Role | What it contributes |
+|---|---|---|
+| `dead-light-framework` (DLF) | the **methodology** — already abstracted & sealed | governance model, sealed Paperwork Standard v1.2, role guides, decision-debate process, templates |
+| `lore-weave` | case study A — polyglot product | numbered docs taxonomy, AMAW workflow, RAID cycles, contract-first OpenAPI, per-service layout |
+| `free-context-hub` | case study B — TS context-hub/KG service | AMAW workflow (2nd occurrence), docs taxonomy, handoff/log, QC harness |
+
+Guiding rule: **prefer what recurs in ≥2 sources** (battle-tested) over one-off
+ideas, and **prefer what DLF already formalized** over re-inventing.
+
+## Decision 1 — naming: NEUTRALIZE FULLY
+
+DLF's Warhammer-40K vocabulary maps to plain, canonical terms. The template ships
+only the neutral names; no theme overlay.
+
+| DLF term | Neutral canonical term |
+|---|---|
+| Astronomican | **Sealed Charter** — immutable project purpose, laws, principles |
+| Ascension Council | **Founding Council** — the one-time charter-sealing group |
+| High Lords | **Stewards** — humans with interpretation authority over the charter |
+| Planetary Governors | **Workstream Leads** — humans leading individual modules |
+| Chapter | **Agent Role** — a category of AI agent |
+| Codex (per chapter) | **Agent Operating Bounds** — a role's permissions, hard stops, autonomy thresholds, output contract |
+| The Chaos | **Failure Modes** — context rot, architect rot, authority drift, scope chaos |
+| Notify Triggers (N-1..N-5) / CCIR | **Escalation Triggers** — the closed set that forces escalation |
+| Hard Stop / HS-2 owner sign-off | **Hard Stop / Owner Sign-off Gate** |
+| Re-priming protocol | **Session Re-priming** — how a fresh session reloads state |
+| Departure / Reckoning records (D-N, AAR) | **Handoff Record / After-Action Record** |
+| Sectoring | **Partitioning** — splitting work by administrative unit |
+| Tier-decision-card | **Tier Selection Guide** |
+| M-tier (M0, M1, …) | **Maturity Tier** — project size/scale band that gates which standards apply |
+| Debate | **Decision Record** (adversarial variant of an ADR) |
+
+A `documents/glossary.md` will carry this table so the mapping is discoverable and
+contributions stay consistent.
+
+## Decision 2 — deliverable: this plan first
+
+Resolved. Extraction proceeds only after review.
+
+## Asset → template-entry mapping
+
+### Dimension 5 — `documents/` (the spine)
+
+| Source asset | Generalized entry | Generalize / strip |
+|---|---|---|
+| DLF Paperwork Standard v1.2 | `documents/standards/paperwork-standard.md` | Strip 40K terms; keep Log→State, self-sufficient log bundles, re-priming, Maturity-Tier sizing, CAP-AP framing. Trim provenance to a short note. |
+| lore-weave `docs/00_index…05_qa` | `documents/taxonomy/` (README + numbered skeleton) | Document the **numbering rule** to stop drift (see drift notes). |
+| DLF `handoff-template` / `log-template` | `documents/handoff/TEMPLATE.md`, `documents/log/TEMPLATE.md` | Neutralize; keep append-only + derived-state shape. |
+| DLF `astronomican-template` | `documents/charter/TEMPLATE.md` | Rename to Sealed Charter. |
+| lore-weave dated `specs/` + `plans/` | extend existing `documents/spec/` with the `YYYY-MM-DD-topic.md` + paired-plan convention | — |
+| DLF `debates/` | `documents/adr/` gains a **decision-debate** variant | Keep adversarial structure; drop chapter lore. |
+
+### Dimension 4 + 3 — `ai/` and `workflows/` (the AMAW workflow)
+
+| Source asset | Generalized entry | Generalize / strip |
+|---|---|---|
+| AMAW `agentic-workflow/` (in lore-weave **and** free-context-hub) | `ai/agents/claude-code/agentic-workflow/` + `workflows/agentic/` | Highest-confidence harvest. Keep `workflow-gate`, `.claude/commands`, `install.sh`, `CLAUDE.md.snippet`. Strip project-specific commands/paths; parameterize via placeholder convention. |
+| lore-weave RAID cycle system | `workflows/agentic/raid-cycles/` | Generalize `active-task.yaml`, `cycle_briefs/`, `CYCLE_LOG`, quota log, escalations. |
+| `.claude` / `.cursor` / `.kiro` coexistence | confirms `ai/agents/<tool>/`; add `ai/rules/` + `ai/prompts/` as the shared source | Extract common rules from the three CLAUDE.md files; note CLAUDE.md size growth as a drift to avoid (keep rules small/composable). |
+
+### Dimension 3 — `workflows/` (contracts)
+
+| Source asset | Generalized entry | Generalize / strip |
+|---|---|---|
+| lore-weave `contracts/api/*/v1/openapi.yaml` + `.spectral.yaml` | `workflows/contracts/openapi-spectral/` | Ship the Spectral ruleset + a versioned-OpenAPI layout convention + a sample contract. |
+
+### Dimension 2 + 1 — `architectures/` and `templates/`
+
+| Source asset | Generalized entry | Generalize / strip |
+|---|---|---|
+| lore-weave Go service layout (`cmd/ + internal/{api,config,…}`) | `architectures/` skeleton + `templates/languages/go` | Make the `internal/` layout concrete; keep `.env.example`, Dockerfile, migrate pattern. |
+| free-context-hub TS service (`src/{api,services,core,db}`, migrations, docker-compose) | `templates/languages/typescript` + `templates/stacks/` | Strip product specifics; keep structure + tooling. |
+
+### Adoption guides — `docs/`
+
+| Source asset | Generalized entry |
+|---|---|
+| DLF `distribution/for-{pms,ics,ai-aides,adopters}.md` | `docs/adoption/` role guides, neutralized |
+| DLF `tier-decision-card`, `deployment-matrix` | fold into `docs/choosing.md` (Maturity-Tier gating) |
+
+## Drifts observed (the standards must prevent these)
+
+- lore-weave: duplicate `docs/04_analysis` **and** `docs/04_integration` (numbering
+  collision) → taxonomy entry must state a one-owner-per-number rule.
+- lore-weave: malformed tracked path with embedded newline under `services/` → add a
+  path-hygiene lint to the template-verification CI (ADR-002).
+- CLAUDE.md grows 5k→22k→34k across the repos → `ai/rules/` must stay small and
+  composable; flag oversized agent-context files in CI.
+- `frontend/` vs `frontend-game/` ambiguity → naming convention should mark the
+  canonical entry.
+
+## Sequencing (after this plan is approved)
+
+1. `documents/` spine — paperwork standard + taxonomy + glossary (neutralized).
+2. AMAW workflow generalization into `ai/` + `workflows/` (highest-confidence).
+3. Contract-first `workflows/contracts/`.
+4. Language templates (Go, TS) + architecture skeletons.
+5. Adoption guides + Maturity-Tier gating in `docs/choosing.md`.
+
+## Still open
+
+- **ADR-003 placeholder syntax** — must be locked before step 2 parameterizes the
+  AMAW install. (unchanged)
+- **Maturity-Tier thresholds** — DLF gates adoption at "M1 and above"; we need neutral,
+  defined bands (what counts as M0 vs M1+) before the Tier Selection Guide is useful.
