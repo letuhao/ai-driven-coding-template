@@ -11,6 +11,7 @@ It is organized around **four independent dimensions** you mix and match, plus a
 | Architecture patterns | [`architectures/`](architectures/) | design choice |
 | Environment & process automation | [`workflows/`](workflows/) | team choice |
 | AI agent assets | [`ai/`](ai/) | tooling choice |
+| Paperwork standards | [`documents/`](documents/) | artifact choice |
 
 The catalogs stay **flat and orthogonal** so each grows independently. Instead of
 pre-building every cross-product, a [`recipe`](recipes/) is a thin manifest that
@@ -34,6 +35,7 @@ templates/      classic source scaffolds (languages/, stacks/)
 architectures/  structural patterns — doc-first (when to use, skeleton, tradeoffs)
 workflows/      ci-cd/, devcontainers/, git/, testing/, release/
 ai/             agents/<tool>/, rules/, prompts/, subagents/, mcp/
+documents/      paperwork standards — spec/, adr/, github/
 recipes/        composers: one pick from each dimension -> recipe.yaml
 scripts/        assembles a new repo from a recipe
 docs/           choosing.md (decision matrix), contributing.md, decisions.md
