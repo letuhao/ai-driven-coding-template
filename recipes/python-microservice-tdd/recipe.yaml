@@ -1,0 +1,30 @@
+# Example recipe — the manifest the assembly script consumes.
+# A recipe references catalog pieces; it does not copy them inline.
+schema: 1
+
+name: python-microservice-tdd
+description: A Python microservice with hexagonal layout, TDD, and GitHub Actions CI.
+maturity: experimental          # experimental | stable
+tags: [python, microservices, hexagonal, tdd]
+
+# --- composition: one pick per dimension (paths are repo-relative) ---
+template:     templates/languages/python
+architecture: architectures/hexagonal
+workflows:
+  - workflows/ci-cd/github-actions
+  - workflows/git/trunk-based
+  - workflows/testing/tdd
+  - workflows/release/conventional-commits
+ai:
+  agents:
+    - ai/agents/claude-code
+  rules:
+    - ai/rules/python-style
+    - ai/rules/security-baseline
+    - ai/rules/testing-tdd
+
+# --- variables substituted into placeholders during assembly ---
+variables:
+  project_name:    { prompt: "Project name", required: true }
+  python_version:  { default: "3.12" }
+  description:     { prompt: "One-line description", default: "" }

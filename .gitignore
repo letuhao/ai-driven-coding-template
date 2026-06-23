@@ -1,0 +1,22 @@
+# Secrets — never commit real env files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Dependency / build output (generated projects may add their own)
+node_modules/
+__pycache__/
+*.pyc
+dist/
+build/
+target/
+.venv/
