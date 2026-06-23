@@ -6,14 +6,42 @@ this is reviewed. Decisions here feed back into [`decisions.md`](decisions.md).
 
 ## Sources
 
+DLF is **WIP and not yet adopted** into the other two repos — they are **not**
+case studies of it. They are mature working repos with an *earlier, ad-hoc*
+paperwork approach; DLF's Paperwork Standard is the **successor design** that
+supersedes that approach.
+
 | Repo | Role | What it contributes |
 |---|---|---|
-| `dead-light-framework` (DLF) | the **methodology** — already abstracted & sealed | governance model, sealed Paperwork Standard v1.2, role guides, decision-debate process, templates |
-| `lore-weave` | case study A — polyglot product | numbered docs taxonomy, AMAW workflow, RAID cycles, contract-first OpenAPI, per-service layout |
-| `free-context-hub` | case study B — TS context-hub/KG service | AMAW workflow (2nd occurrence), docs taxonomy, handoff/log, QC harness |
+| `dead-light-framework` (DLF) | the **methodology** — WIP, designed but not yet adopted | the chosen Paperwork Standard, governance model, role guides, decision-debate process, templates |
+| `lore-weave` | mature working repo — polyglot product | **adopted** AMAW workflow, RAID cycles, contract-first OpenAPI, per-service layout; *earlier* ad-hoc docs taxonomy |
+| `free-context-hub` | mature working repo — TS context-hub/KG service | **adopted** AMAW workflow (2nd occurrence), QC harness; *earlier* ad-hoc docs taxonomy + handoff/log |
 
-Guiding rule: **prefer what recurs in ≥2 sources** (battle-tested) over one-off
-ideas, and **prefer what DLF already formalized** over re-inventing.
+Guiding rules:
+- For **tooling/workflow**, prefer what **recurs in ≥2 repos and is actually adopted**
+  (AMAW qualifies — highest confidence).
+- For the **paperwork spine**, DLF **supersedes** the ad-hoc taxonomies *by design*,
+  even though it is not yet battle-tested — see below for why.
+
+## Why the DLF Paperwork Standard is the spine
+
+It is the only one of the three designed for the hard case: **many agents working
+across many services/modules at the same time — one branch or many — conflict-free.**
+The mechanism:
+
+- **Append-only Logs** — agents *append*, never edit shared state, so concurrent
+  writers don't collide.
+- **State derived as a CRDT fold** over the logs — divergent regenerations are
+  guaranteed to converge; two agents folding the same logs cannot disagree.
+- **Partition by administrative unit** + a federation model — each service/module
+  owns its own log stream; cross-repo work composes without a central lock.
+- **Self-sufficient log bundles + re-priming from local copies** — a fresh agent
+  session rebuilds full context with no coordination.
+
+The ad-hoc taxonomies in lore-weave / free-context-hub carry session state well for a
+*single* stream of work but were not designed for conflict-free concurrency. The
+template adopts DLF's model as the standard and treats those taxonomies as input on
+*document categories*, not on the concurrency model.
 
 ## Decision 1 — naming: NEUTRALIZE FULLY
 
