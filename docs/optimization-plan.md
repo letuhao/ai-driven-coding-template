@@ -14,12 +14,14 @@ supersedes that approach.
 | Repo | Role | What it contributes |
 |---|---|---|
 | `dead-light-framework` (DLF) | the **methodology** — WIP, designed but not yet adopted | the chosen Paperwork Standard, governance model, role guides, decision-debate process, templates |
-| `lore-weave` | mature working repo — polyglot product | **adopted** AMAW workflow, RAID cycles, contract-first OpenAPI, per-service layout; *earlier* ad-hoc docs taxonomy |
-| `free-context-hub` | mature working repo — TS context-hub/KG service | **adopted** AMAW workflow (2nd occurrence), QC harness; *earlier* ad-hoc docs taxonomy + handoff/log |
+| `lore-weave` | mature working repo — polyglot product | the **workflow toolkit** (`/loom` primary, `/raid` long-run, `/amaw` rare), RAID cycles, contract-first OpenAPI, per-service layout; *earlier* ad-hoc docs taxonomy |
+| `free-context-hub` | mature working repo — TS context-hub/KG service | workflow substrate (`workflow-gate`, `review-impl`), QC harness; *earlier* ad-hoc docs taxonomy + handoff/log |
 
 Guiding rules:
-- For **tooling/workflow**, prefer what **recurs in ≥2 repos and is actually adopted**
-  (AMAW qualifies — highest confidence).
+- For **tooling/workflow**, harvest the **tiered toolkit** with `/loom` as the
+  default daily driver; `/raid` (long runs) and `/amaw` (rare, load-bearing) escalate
+  from it. Generalize the shared substrate (CLAUDE.md Task-Workflow SSOT + workflow-gate)
+  before the individual commands.
 - For the **paperwork spine**, DLF **supersedes** the ad-hoc taxonomies *by design*,
   even though it is not yet battle-tested — see below for why.
 
@@ -86,13 +88,21 @@ Resolved. Extraction proceeds only after review.
 | lore-weave dated `specs/` + `plans/` | extend existing `documents/spec/` with the `YYYY-MM-DD-topic.md` + paired-plan convention | — |
 | DLF `debates/` | `documents/adr/` gains a **decision-debate** variant | Keep adversarial structure; drop chapter lore. |
 
-### Dimension 4 + 3 — `ai/` and `workflows/` (the AMAW workflow)
+### Dimension 4 + 3 — `ai/` and `workflows/` (the workflow toolkit)
 
-| Source asset | Generalized entry | Generalize / strip |
-|---|---|---|
-| AMAW `agentic-workflow/` (in lore-weave **and** free-context-hub) | `ai/agents/claude-code/agentic-workflow/` + `workflows/agentic/` | Highest-confidence harvest. Keep `workflow-gate`, `.claude/commands`, `install.sh`, `CLAUDE.md.snippet`. Strip project-specific commands/paths; parameterize via placeholder convention. |
-| lore-weave RAID cycle system | `workflows/agentic/raid-cycles/` | Generalize `active-task.yaml`, `cycle_briefs/`, `CYCLE_LOG`, quota log, escalations. |
-| `.claude` / `.cursor` / `.kiro` coexistence | confirms `ai/agents/<tool>/`; add `ai/rules/` + `ai/prompts/` as the shared source | Extract common rules from the three CLAUDE.md files; note CLAUDE.md size growth as a drift to avoid (keep rules small/composable). |
+The workflow layer is a **tiered toolkit**, not a single workflow. `/loom` is the
+default; the others escalate from it. All share one substrate: a **CLAUDE.md "Task
+Workflow" SSOT** + **`workflow-gate`** enforcement + the `review-impl` review step.
+Generalize the *substrate first*, then each tier as a command on top of it.
+
+| Tier | Source asset | Usage | Generalized entry | Generalize / strip |
+|---|---|---|---|---|
+| **substrate** | CLAUDE.md "Task Workflow" + `scripts/workflow-gate.{sh,py}` + `.workflow-state.json` | always | `workflows/loom/gate/` + `ai/rules/task-workflow.md` (the SSOT) | The 12-phase model + size table + anti-skip gate are the core. Strip repo-specific service notes. |
+| **`/loom`** (primary) | `.claude/commands/loom.md` | almost always | `ai/agents/claude-code/commands/loom.md` | 12-phase human-in-loop, size-classified, PO checkpoints. Strip monorepo/service specifics; parameterize handoff paths. |
+| **`/raid`** (long runs) | `.claude/commands/raid.md` + `.raid/active-task.yaml` + `scripts/raid/*` + `docs/raid/*` | long runs | `workflows/raid/` (autonomous coordinator) | Generalize cycle log, briefs, quota governance, per-branch `active-task.yaml`, escalations, resume semantics. |
+| **`warp`** ("more control") | **not yet created in any repo** (user confirmed uncommitted/absent) | frequent-ish | TBD — capture once defined | Pending: user to describe what "more control" means vs loom/raid before it can be generalized. |
+| **`/amaw`** (rare deepening) | `.claude/commands/amaw.md` + `agentic-workflow/` | rarely, opt-in | `ai/agents/claude-code/commands/amaw.md` | Position as an L+ load-bearing escalation invoked *inside* loom — NOT the headline workflow. |
+| shared | `.claude` / `.cursor` / `.kiro` coexistence; `review-impl` | — | `ai/agents/<tool>/`; `ai/rules/` + `ai/prompts/` as shared source | Extract common rules from the three CLAUDE.md files; flag CLAUDE.md size growth as drift (keep rules small/composable). |
 
 ### Dimension 3 — `workflows/` (contracts)
 
@@ -128,7 +138,8 @@ Resolved. Extraction proceeds only after review.
 ## Sequencing (after this plan is approved)
 
 1. `documents/` spine — paperwork standard + taxonomy + glossary (neutralized).
-2. AMAW workflow generalization into `ai/` + `workflows/` (highest-confidence).
+2. Workflow toolkit into `ai/` + `workflows/`: substrate (gate + Task-Workflow SSOT)
+   → `/loom` (primary) → `/raid` (long-run) → `/amaw` (rare). Slot `warp` in once defined.
 3. Contract-first `workflows/contracts/`.
 4. Language templates (Go, TS) + architecture skeletons.
 5. Adoption guides + Maturity-Tier gating in `docs/choosing.md`.
