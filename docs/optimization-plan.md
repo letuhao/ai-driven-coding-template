@@ -161,7 +161,9 @@ agents × many modules, no conflict), two layers.
 
 ## Still open
 
-- **ADR-003 placeholder syntax** — must be locked before step 2 parameterizes the
-  AMAW install. (unchanged)
+- ~~ADR-003 placeholder syntax~~ **RESOLVED**: `{{ var }}` (Jinja de facto) for
+  assembler-filled machine substitution; `<blank>` (DLF's existing convention) for
+  author-time human fill. Re-align the existing `documents/*/TEMPLATE.md` files during
+  extraction (they currently misuse `{{ }}` for author-time blanks).
 - **Maturity-Tier thresholds** — DLF gates adoption at "M1 and above"; we need neutral,
   defined bands (what counts as M0 vs M1+) before the Tier Selection Guide is useful.

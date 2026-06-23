@@ -27,13 +27,27 @@ long-term failure mode. A template that doesn't build is worse than none.
 
 ---
 
-## ADR-003 — One placeholder convention, collection-wide
+## ADR-003 — Two placeholder conventions, split by actor (RESOLVED)
 
-**Decision.** Pick a single substitution convention (e.g. `{{project_name}}`)
-used by every catalog entry; the assembler is the only thing that expands it.
+**Decision.** Two conventions, distinguished by *who fills them and when*:
 
-**Why.** Without a shared convention every recipe reinvents substitution. This is
-painful to retrofit, so it is fixed up front. *(Concrete syntax: TODO — confirm.)*
+- **`{{ variable }}`** (Jinja/Mustache — the industry de facto for scaffolding) —
+  filled by the **assembler at scaffold time** from `recipe.yaml::variables`
+  (e.g. `{{project_name}}`, `{{date}}`). This is the only thing the assembler expands.
+- **`<descriptive blank>`** (angle-bracket — the convention **DLF already uses** in its
+  living doc templates) — left for a **human or agent to fill when authoring a document
+  instance** later (e.g. `<root cause>`, `<one-line decision>`).
+
+**Why two, not one.** They are not redundant: they are filled by *different actors at
+different times* (machine at init vs. author later). Forcing one syntax breaks one of
+the two — and `<...>` specifically is unsafe for machine substitution because angle
+brackets collide with real content (generics `Vec<T>`, HTML, comparison operators), so
+it must stay a human-fill marker only. `{{ }}` is the chosen de facto for machine fill.
+
+**Consequence.** The doc templates I scaffolded earlier (`documents/spec/TEMPLATE.md`,
+`documents/adr/TEMPLATE.md`) currently use `{{ }}` for author-time blanks like
+`{{title}}`/`{{owner}}` — those must be re-aligned to `<title>`/`<owner>` during
+extraction, reserving `{{ }}` for fields the assembler actually fills (e.g. project name).
 
 ---
 
