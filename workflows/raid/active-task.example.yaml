@@ -1,0 +1,19 @@
+# Copy to .raid/active-task.yaml on a RAID-eligible branch. Per-branch: switching
+# branch switches the active task, so the Coordinator picks up the right one.
+# (A .raid/active-task.json with the same keys works zero-dependency.)
+
+task: <task-slug>
+branch: <branch this task runs on>
+
+# Paths the coordinator reads (defaults shown — omit to use them).
+cycle_log:  docs/raid/CYCLE_LOG.md
+briefs_dir: docs/raid/cycle_briefs
+audit:      docs/audit/AUDIT_LOG.jsonl
+
+# The task's mega-plan (human-authored).
+workflow_doc: docs/raid/<task>/RAID_WORKFLOW.md
+
+# Paths a cycle may NOT touch (enforce via the cycle brief bounds).
+bounds:
+  - <sealed charter / SSOT>
+  - <prod env / infra>

@@ -4,36 +4,31 @@ Supporting assets for the [`/raid`](../../ai/agents/claude-code/commands/raid.md
 Coordinator mode. The command is the harness; these are the durable, per-branch state it
 drives. SSOT for phases: [`ai/rules/task-workflow.md`](../../ai/rules/task-workflow.md).
 
-## What belongs here (and where it lives in a project)
+## What ships here
 
-| Asset | Location in a project | Purpose |
+| Asset | Status | Purpose |
 |---|---|---|
-| `active-task.yaml` | `.raid/active-task.yaml` | per-branch task identity — which task is active on this branch |
-| Cycle log | `docs/raid/CYCLE_LOG.md` | one row per cycle: status, deps, commit sha, completed_at |
-| Cycle briefs | `docs/raid/cycle_briefs/<NN>-<slug>.md` | the hermetic brief a cold-start cycle runner reads |
-| Escalations | `docs/raid/ESCALATIONS.md` | where a halted cycle records cycle/type/reason/action |
-| Quota / budget log | `docs/raid/QUOTA_LOG.jsonl` | per-cycle burn, drives the proceed/warn/pause check |
-| In-progress state | `docs/raid/IN_PROGRESS/cycle-<N>-state.md` | per-cycle crash-recovery state |
+| [`raid-coordinator.py`](raid-coordinator.py) | **shipped, runnable** | the loop core: `next-cycle` (next PENDING with deps DONE) + `done-cycle <N> <sha>`. Project-agnostic; paths from active-task or defaults. |
+| [`active-task.example.yaml`](active-task.example.yaml) | shipped | per-branch task identity (`.raid/active-task.yaml`; `.json` works zero-dep) |
+| [`CYCLE_LOG.template.md`](CYCLE_LOG.template.md) | shipped | the status-board table the coordinator parses |
+| [`cycle-runner-prompt.md`](cycle-runner-prompt.md) | shipped | the cold-start sub-agent template (reads only its brief + listed files) |
 
-Durable state in the cycle log + audit log + in-progress files is what makes a run
-**resumable** — re-invoking `/raid` picks up the next ready cycle. This mirrors the
-[paperwork standard](../../documents/standards/paperwork-standard.md) Log→State + crash-recovery model.
-
-## active-task.yaml (shape)
-
-```yaml
-task: <task-slug>
-branch: <branch this task runs on>
-workflow_doc: docs/raid/<task>/RAID_WORKFLOW.md   # the task's mega-plan
-cycle_log:   docs/raid/CYCLE_LOG.md
-quota_log:   docs/raid/QUOTA_LOG.jsonl
-bounds:                                            # paths a cycle may NOT touch
-  - <charter / SSOT>
-  - <prod env>
+```bash
+python raid-coordinator.py next-cycle           # JSON {cycle,title,brief_path} or {idle:true}
+python raid-coordinator.py done-cycle 7 <sha>    # mark cycle 7 DONE
 ```
 
-## Porting note
+Durable state in the cycle log + audit log is what makes a run **resumable** — re-invoking
+`/raid` picks up the next ready cycle. This mirrors the
+[paperwork standard](../../documents/standards/paperwork-standard.md) Log→State + crash-recovery model.
 
-Generalize the cycle-helper + quota-check scripts (prefer one runtime). Keep the
-**Coordinator overhead budget** (small per-cycle token cost) and the **cold-start cycle
-runner** (reads only its brief + listed files), so long runs don't accumulate context.
+## Project-supplied (NOT generalizable)
+
+These are bespoke per task and are **not** shipped — the project provides them:
+
+- **Per-cycle verifiers** — each cycle's acceptance check is task-specific.
+- **Cycle briefs** — `docs/raid/cycle_briefs/<NN>_<slug>.md`, authored per task (declare deps in
+  a `## Dependencies` section).
+- **Quota / escalation hooks** — optional. The coordinator runs without them; wire a budget
+  check into the loop if your run needs one (mirrors the gate's pluggable-integration pattern).
+- **The mega-plan** — `workflow_doc` in active-task, human-authored.
