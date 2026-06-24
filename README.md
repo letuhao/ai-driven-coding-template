@@ -2,6 +2,16 @@
 
 A collection that helps you stand up a new, AI-ready repository fast.
 
+> **Just want to use it? Don't read this whole repo.** Run the assembler — it copies and
+> renders everything for you:
+> ```bash
+> python scripts/new-project.py --list
+> python scripts/new-project.py --recipe go-minimal --name myapp \
+>   --var go_module=example.com/myapp --out ../myapp
+> ```
+> Read the catalogs/ADRs **only if you want to extend the collection**. AI agents: see
+> [`AGENTS.md`](AGENTS.md).
+
 It is organized around **five independent dimensions** you mix and match, plus a **recipe**
 layer + an **assembler** that compose them into a working project.
 
