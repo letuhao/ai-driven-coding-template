@@ -1,0 +1,29 @@
+# Example /warp slice manifest — the independence gate validates this before fan-out.
+# Every slice's write-set must be path-prefix-disjoint from every other's, and no slice
+# may write a frozen-interface path. A conflict at reconcile ⇒ this manifest was wrong.
+schema: 1
+
+task: <task-slug>
+base_sha: <captured AFTER the DESIGN artifacts are committed>   # every slice is pinned to this
+
+# Files that define the contract between slices. Frozen: pinned by git blob sha; no slice
+# may write them. The gate re-checks these are unchanged vs their pinned sha before BUILD.
+frozen_interface:
+  - { path: contracts/api/orders/v1/openapi.yaml, blob_sha: <sha> }
+  - { path: packages/types/src/order.ts,          blob_sha: <sha> }
+
+slices:
+  - id: 1
+    label: orders-service
+    writes: [ services/orders/ ]          # path-prefix write-set — must be disjoint
+    reads:  [ packages/types/, contracts/api/orders/v1/ ]
+    acceptance: <one-line done condition>
+  - id: 2
+    label: billing-service
+    writes: [ services/billing/ ]
+    reads:  [ packages/types/, contracts/api/orders/v1/ ]
+    acceptance: <one-line done condition>
+
+merge_plan:
+  integrate_order: [ 1, 2 ]
+  on_contract_violation: HALT_REDESIGN     # a write-set conflict means re-DESIGN, not patch

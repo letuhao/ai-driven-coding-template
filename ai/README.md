@@ -5,14 +5,24 @@ Everything that makes a repo "AI-ready." This is **Dimension 4**.
 ```
 agents/      per-tool configs — the ONLY place that may assume a specific tool
   claude-code/
+    commands/  loom · warp · raid · amaw · review-impl (the workflow toolkit)
   cursor/
   copilot/
   windsurf/
 rules/       reusable, tool-agnostic rule snippets (style, security, testing)
+  task-workflow.md   the workflow SSOT (12 phases, size table, anti-skip) — keep loaded
 prompts/     reusable, tool-agnostic prompt/instruction fragments
+  roles/     adversary · scope-guard · healer (cold-start review roles, used by /amaw)
 subagents/   specialized agent definitions
 mcp/         MCP server configs
 ```
+
+## Workflow toolkit
+
+The `commands/` are thin harnesses; the **substance is tool-agnostic** in `rules/task-workflow.md`
+(the SSOT) and `prompts/roles/`. The enforcement substrate (gate + state machine) lives under
+[`workflows/loom/gate/`](../workflows/). See [`rules/task-workflow.md`](rules/task-workflow.md)
+for the 2×2 model (loom / warp / raid + amaw overlay).
 
 ## Design rules
 
