@@ -68,5 +68,6 @@ gate amaw-enable [task-slug]                                            # flip t
 
 ## Still to port (separate scripts)
 
-The `slices` subcommand delegates to `workflows/warp/slice-manifest-validate.py`, and the raid
-cycle-helper/quota scripts are specified as contracts in their READMEs — not yet implemented.
+The `slices` subcommand delegates to [`workflows/warp/slice-manifest-validate.py`](../../warp/slice-manifest-validate.py)
+— **shipped and runnable**. The raid cycle-helper / quota scripts are still specified as contracts
+in [`workflows/raid/`](../../raid/README.md) — not yet implemented.
