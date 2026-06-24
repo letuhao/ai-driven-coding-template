@@ -115,3 +115,19 @@ not raw size — so the 0→1 boundary (does this project even need durable stat
 anchored on those observable triggers, not on a KLOC line DLF itself calls "soft" and
 "not a citable cutoff." Scale (LOC + unit count) only governs the 1→2 split, where it is
 the genuinely relevant signal (when does one unit become a federation?).
+
+---
+
+## ADR-008 — DLF Paperwork Standard ships as `experimental`
+
+**Decision.** The harvested DLF Paperwork Standard ships with maturity
+**`experimental`**, not `stable`. Adoption guides must say so plainly and frame it as
+opt-in. It graduates to `stable` only after real adoption evidence (e.g. it is in use in
+lore-weave / free-context-hub, or another project, through at least one full lifecycle).
+
+**Why.** DLF is **WIP and not yet adopted anywhere** (see the optimization plan). It is
+the chosen spine for its *design* (conflict-free concurrent multi-agent/multi-module work),
+not a track record. Shipping it `stable` would overstate its maturity and mislead adopters;
+`experimental` is the honest tag and matches the safe-default ethos of ADR-006. The
+maturity vocabulary (`experimental` | `stable`) is the same one used for recipes
+(see `recipes/README.md`), so the signal is consistent across the collection.

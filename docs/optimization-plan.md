@@ -151,7 +151,8 @@ agents × many modules, no conflict), two layers.
 
 ## Sequencing (after this plan is approved)
 
-1. `documents/` spine — paperwork standard + taxonomy + glossary (neutralized).
+1. `documents/` spine — paperwork standard (tagged `experimental`, ADR-008) + taxonomy
+   + glossary (neutralized).
 2. Workflow toolkit into `ai/` + `workflows/`: substrate (gate inc. `slices` +
    Task-Workflow SSOT + amaw roles) → `/loom` (serial, primary) → `/warp` (parallel) →
    `/raid` (autonomous long-run). amaw roles extracted once, reused by all three.
@@ -168,3 +169,7 @@ agents × many modules, no conflict), two layers.
 - ~~Maturity-Tier thresholds~~ **RESOLVED** (ADR-007): hybrid gate — trigger-based for
   Tier 0→1 (session-continuity / actors / context-fit), scale-based for Tier 1→2
   (>50 KLOC or ≥2 governance units). Tier table now in `docs/choosing.md`.
+- ~~Paperwork Standard maturity tag~~ **RESOLVED** (ADR-008): ships as `experimental`
+  (DLF is WIP, not yet adopted); graduates to `stable` only after real adoption evidence.
+
+**All open decisions resolved — plan is ready for extraction (sequence above).**
