@@ -11,7 +11,8 @@ or several concurrent agents — stay current without conflict.
 ```
 glossary.md            neutralized term map (authoritative — use these terms)
 standards/
-  paperwork-standard.md   the spine: Log→State, cursor, re-priming, tiers (experimental)
+  paperwork-standard.md            operational core (hot path) — load every re-prime
+  paperwork-standard-reference.md  full edge-case reference (cold path) — read on demand
 taxonomy/
   README.md            numbered docs/ layout + the anti-drift numbering rule
 charter/TEMPLATE.md    Sealed Charter — frozen project authority (purpose/laws/principles)

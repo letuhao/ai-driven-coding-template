@@ -23,6 +23,11 @@ authoritative mapping; contributions must use the canonical column.
 | **Decision Record** | A recorded decision; the adversarial variant is a *decision-debate* | Debate |
 | **State document** | The current-snapshot doc, derived from the Log (`HANDOFF.md`) | (same) |
 | **Log document** | The append-only history doc; source of truth (`LOG.md`) | (same) |
+| **Root tier (shared)** | The shared top-ancestor tier every unit reads: sealed Charter + shared operating bounds + a root Log of seal/amendment events | Imperial tier |
+| **Unit / child unit** | One governance partition (its own State+Log); may nest child units | Sector |
+| **Authority tier / Execution tier** | Who may seal/override a decision (Authority) vs who works within bounds (Execution) | (same) |
+| **Refer-back** | Execution acknowledges a sealed directive's authority but suspends + refers it up when local facts changed — neither obey-as-is nor override | obedezco-pero-no-cumplo |
+| **Ancestor-tail pull** | At re-prime, reading each ancestor's Log tail since this unit's recorded cursor for it | FRAGO-pull |
 
 See [[paperwork-standard]] for how these compose. A `[[name]]` link points at a file in
 this catalog by its slug.

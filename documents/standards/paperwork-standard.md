@@ -6,13 +6,19 @@ audience: both
 derived_from: Dead Light Framework Paperwork Standard (WIP, not yet adopted)
 ---
 
-# Paperwork Standard
+# Paperwork Standard — operational core
 
 > **Maturity: `experimental`.** Harvested from the Dead Light Framework, which is
 > work-in-progress and **not yet adopted** in a real project through a full lifecycle.
 > It is the chosen spine for its *design* (conflict-free concurrent multi-agent work),
 > not a track record. Adopt opt-in; it graduates to `stable` only after adoption
 > evidence. See [ADR-008](../../docs/decisions.md). Neutralized terms: [[glossary]].
+
+> **Hot path vs cold path.** This file is the **operational core** — the 95% you load at
+> every session re-prime; keep it lean so re-priming stays cheap on long autonomous runs.
+> Rare edge cases (federation, lifecycle transitions, disputes, dormant decisions,
+> concurrent-fold tie-breaks, long-partition catch-up) live in the **on-demand**
+> [full reference](paperwork-standard-reference.md) — read it only when you hit one.
 
 ## Summary
 
@@ -59,6 +65,7 @@ A fresh session reads `HANDOFF.md` first, then the `LOG.md` lines added in commi
 **after** the State's `cursor:`, and is immediately current.
 
 Templates: [[handoff-template]] (State), [[log-template]] (Log).
+*Edge cases — full entry schema, commit cadence:* reference §R3.
 
 ## 3. Log events — self-sufficient bundles
 
@@ -84,6 +91,9 @@ One line per event; each line readable without its neighbors:
 before changing) · `[disputed]` (was wrong when written) · `[dormant]` (sealed but not yet
 in effect; carries `activates_when: …`).
 
+*Edge cases — full 16-event catalog, override/refer-back, dormant activation, lifecycle
+status machine:* reference §R4, §R8.
+
 ## 4. Causal cursor — the fold
 
 The State's `cursor:` is the SHA of the last `LOG.md` commit folded into the snapshot.
@@ -91,6 +101,9 @@ Two sessions with the same cursor read the same Log delta — there is no drift 
 "recent". Regenerating the State is a **deterministic fold** over Log lines: same Log →
 same State, regardless of who folds or in what order (a CRDT). This is why concurrent
 regenerations cannot disagree.
+
+*Edge cases — concurrent-event tie-break (lowest SHA loses + escalation), regeneration
+paths, periodic rebase, two-threshold staleness:* reference §R6.
 
 ## 5. Crash recovery
 
@@ -107,6 +120,9 @@ tier it reads — so cross-unit and cross-repo work composes without a central l
 unit re-primes from its **own local copies**; federation is read-only reference, never a
 blocking dependency. This is the execution counterpart's twin: see `/warp` for the
 conflict-free *execution* layer.
+
+*Edge cases — tier hierarchy, shared-artifact placement, ancestor-tail pull, graduation,
+`federation.yaml`, the full re-priming protocol:* reference §R2, §R9–§R12.
 
 ## 7. What this standard does NOT do
 
