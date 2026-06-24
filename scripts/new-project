@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+# Thin POSIX wrapper around new-project.py.
+exec python "$(dirname "$0")/new-project.py" "$@"

@@ -1,0 +1,13 @@
+{
+  "name": "go-minimal",
+  "description": "Minimal Go service - no architecture opinion. The 80% starting point.",
+  "maturity": "experimental",
+  "tags": ["go", "minimal"],
+  "variables": {
+    "project_name": { "required": true },
+    "go_module": { "required": true }
+  },
+  "pieces": [
+    { "src": "templates/languages/go", "dest": "." }
+  ]
+}
