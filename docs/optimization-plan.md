@@ -149,16 +149,22 @@ agents × many modules, no conflict), two layers.
 - `frontend/` vs `frontend-game/` ambiguity → naming convention should mark the
   canonical entry.
 
-## Sequencing (after this plan is approved)
+## Sequencing — ALL EXTRACTED ✅
 
-1. `documents/` spine — paperwork standard (tagged `experimental`, ADR-008) + taxonomy
-   + glossary (neutralized).
-2. Workflow toolkit into `ai/` + `workflows/`: substrate (gate inc. `slices` +
-   Task-Workflow SSOT + amaw roles) → `/loom` (serial, primary) → `/warp` (parallel) →
-   `/raid` (autonomous long-run). amaw roles extracted once, reused by all three.
-3. Contract-first `workflows/contracts/`.
-4. Language templates (Go, TS) + architecture skeletons.
-5. Adoption guides + Maturity-Tier gating in `docs/choosing.md`.
+1. ✅ `documents/` spine — paperwork standard (`experimental`, ADR-008) layered into a
+   hot operational core + on-demand reference; taxonomy; charter/handoff/log; glossary.
+2. ✅ Workflow toolkit into `ai/` + `workflows/`: substrate (generic config-driven gate,
+   ADR-009 + Task-Workflow SSOT + amaw roles) → `/loom` → `/warp` → `/raid`. Gate, warp
+   validator/worktrees, raid coordinator all ported runnable + smoke-tested.
+3. ✅ Contracts `workflows/contracts/` — opt-in, multi-preset (ADR-010); OpenAPI+Spectral
+   runnable; gRPC/async/graphql stubs.
+4. ✅ Language templates — go / typescript / python (verified by render+build).
+5. ✅ Assembler (`scripts/new-project.py`) + recipes (go-minimal, ts-minimal,
+   python-microservice-tdd) + template-verification CI (ADR-002) + adoption guides
+   (`docs/adoption/`, neutralized) + Maturity-Tier gating in `docs/choosing.md`.
+
+Remaining catalog growth (not blocking): rust template, architecture skeletons, the
+gRPC/async/graphql contract presets, additional recipes — add on demand.
 
 ## Still open
 

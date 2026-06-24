@@ -41,8 +41,17 @@ scripts/        assembles a new repo from a recipe
 docs/           choosing.md (decision matrix), contributing.md, decisions.md
 ```
 
+## Create a project
+
+```bash
+python scripts/new-project.py --list
+python scripts/new-project.py --recipe go-minimal --name myapp \
+  --var go_module=example.com/myapp --out ../myapp
+```
+
 ## Picking pieces
 
-See [`docs/choosing.md`](docs/choosing.md) for the decision matrix
-(which architecture / process fits your case) and [`docs/decisions.md`](docs/decisions.md)
-for the design rationale behind this collection.
+- [`docs/adoption/`](docs/adoption/) — how to adopt this collection, by role (owner / developer / AI agent).
+- [`docs/choosing.md`](docs/choosing.md) — decision matrix: architecture, process, contracts, Maturity Tier.
+- [`docs/decisions.md`](docs/decisions.md) — the design rationale (ADRs).
+- [`docs/optimization-plan.md`](docs/optimization-plan.md) — how the collection was harvested from three source repos.
