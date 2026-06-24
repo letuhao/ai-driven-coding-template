@@ -1,13 +1,21 @@
-# ADR-{{number}}: {{title}}
+<!--
+  Architecture Decision Record. Author-time blanks use <...> (you fill them).
+  Two variants:
+    - Standard ADR (below) — a single recorded decision.
+    - Decision-debate — for contested decisions, add an adversarial section (see end).
+  Terms: ../glossary.md
+-->
 
-- **Status:** proposed | accepted | superseded by ADR-NNN
-- **Date:** {{date}}
-- **Deciders:** {{deciders}}
+# ADR-<NNN>: <title>
+
+- **Status:** proposed | accepted | superseded by ADR-<NNN>
+- **Date:** <YYYY-MM-DD>
+- **Deciders:** <names>
 
 ## Context
 
-> The forces at play: the problem, constraints, and what makes this a real
-> decision. Neutral — don't argue for the outcome yet.
+> The forces at play: the problem, constraints, and what makes this a real decision.
+> Neutral — don't argue for the outcome yet.
 
 ## Decision
 
@@ -15,12 +23,27 @@
 
 ## Consequences
 
-> What becomes easier and what becomes harder as a result. Be honest about the
-> tradeoffs — this is what stops the decision being re-litigated later.
+> What becomes easier and what becomes harder. Be honest about the tradeoffs — this is
+> what stops the decision being re-litigated later.
 
-- **Positive:** ...
-- **Negative:** ...
+- **Positive:** <...>
+- **Negative:** <...>
 
 ## Alternatives considered
 
 - **<option>** — why not chosen.
+
+---
+
+<!--
+  DECISION-DEBATE VARIANT (optional) — for contested / load-bearing decisions.
+  Harvested from DLF's adversarial "debate" format, neutralized. Use when a single
+  author's ADR would under-test the choice.
+-->
+
+## Debate (optional)
+
+- **Position A — <name>:** <argument> · strongest objection: <...>
+- **Position B — <name>:** <argument> · strongest objection: <...>
+- **Adversary pass:** <the strongest case AGAINST the chosen decision, stated fairly>
+- **Resolution:** <which position prevailed and why; what evidence settled it>
