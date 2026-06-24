@@ -1,0 +1,12 @@
+{
+  "name": "ts-minimal",
+  "description": "Minimal TypeScript (ESM) service - no architecture opinion.",
+  "maturity": "experimental",
+  "tags": ["typescript", "minimal"],
+  "variables": {
+    "project_name": { "required": true }
+  },
+  "pieces": [
+    { "src": "templates/languages/typescript", "dest": "." }
+  ]
+}

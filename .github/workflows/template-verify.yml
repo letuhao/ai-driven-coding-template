@@ -1,0 +1,88 @@
+# Template-verification CI (ADR-002): assemble each template via the real assembler,
+# then build + test the GENERATED project. A template that doesn't build is worse than none.
+name: template-verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "0 6 * * 1" # weekly Monday 06:00 UTC — catch rot in pinned deps/toolchains
+
+jobs:
+  go:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version: "1.23" }
+      - name: Assemble + build + test
+        run: |
+          python scripts/new-project.py --recipe go-minimal --name demo \
+            --var go_module=example.com/demo --out /tmp/go-demo
+          cd /tmp/go-demo && go build ./... && go test ./... -race
+
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Assemble + test + lint
+        run: |
+          python scripts/new-project.py --recipe python-microservice-tdd --name demo-svc \
+            --var python_package=demo_svc --out /tmp/py-demo
+          cd /tmp/py-demo && pip install -e ".[dev]"
+          pytest -q
+          ruff check .
+
+  typescript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Assemble + build + lint + test
+        run: |
+          python scripts/new-project.py --recipe ts-minimal --name demo --out /tmp/ts-demo
+          cd /tmp/ts-demo && npm install --no-audit --no-fund
+          npm run build
+          npm run lint
+          npm test
+
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - name: Spectral lint the example contract
+        run: |
+          npx -y @stoplight/spectral-cli lint \
+            workflows/contracts/openapi-spectral/EXAMPLE-openapi.yaml \
+            -r workflows/contracts/openapi-spectral/.spectral.yaml
+
+  scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Self-test the workflow scripts
+        run: |
+          set -e
+          # syntax
+          python -m py_compile workflows/loom/gate/workflow-gate.py \
+            workflows/warp/slice-manifest-validate.py workflows/warp/worktrees.py \
+            workflows/raid/raid-coordinator.py scripts/new-project.py
+          # gate: risk floor blocks, size ok
+          cd "$(mktemp -d)" && git init -q
+          cp "$GITHUB_WORKSPACE"/workflows/loom/gate/workflow-gate.py gate.py
+          ! python gate.py size XS 1 1 2   # must BLOCK (risk floor)
+          python gate.py size M 3 4 0
+          # warp validator: overlapping write-sets must BLOCK
+          cp "$GITHUB_WORKSPACE"/workflows/warp/slice-manifest-validate.py v.py
+          printf '{"task":"t","frozen_interface":[{"path":"c/x.yaml","sha":"abc1234"}],"slices":[{"id":1,"writes":["a/**"],"acceptance":["t"]},{"id":2,"writes":["a/sub/**"],"acceptance":["t"]}]}' > bad.json
+          ! python v.py bad.json
