@@ -165,5 +165,6 @@ agents × many modules, no conflict), two layers.
   assembler-filled machine substitution; `<blank>` (DLF's existing convention) for
   author-time human fill. Re-align the existing `documents/*/TEMPLATE.md` files during
   extraction (they currently misuse `{{ }}` for author-time blanks).
-- **Maturity-Tier thresholds** — DLF gates adoption at "M1 and above"; we need neutral,
-  defined bands (what counts as M0 vs M1+) before the Tier Selection Guide is useful.
+- ~~Maturity-Tier thresholds~~ **RESOLVED** (ADR-007): hybrid gate — trigger-based for
+  Tier 0→1 (session-continuity / actors / context-fit), scale-based for Tier 1→2
+  (>50 KLOC or ≥2 governance units). Tier table now in `docs/choosing.md`.

@@ -80,3 +80,38 @@ belongs to the user, unencumbered**, separate from the collection's own LICENSE.
 
 **Why.** Copied templates become everyone's baseline — a bad default propagates.
 Ambiguous licensing kills adoption of a scaffolder.
+
+---
+
+## ADR-007 — Maturity-Tier gate: hybrid (trigger for 0→1, scale for 1→2)
+
+**Decision.** Three neutral tiers (M0/M1/M2 kept as DLF aliases). The gate is **hybrid**:
+the lower boundary is trigger-based; the upper boundary is scale-based.
+
+- **Tier 0 — Prototype** *(M0)*: `README.md` suffices; no Log/State. The default until a
+  Tier-1 trigger fires.
+- **Tier 0 → Tier 1 — by trigger.** Enter **Tier 1 — Continuity** if **any**:
+  1. work spans **>1 session** and earlier decisions must survive (the *why* is not
+     recoverable from code/git alone);
+  2. **≥2 actors** (human or agent) touch it over time;
+  3. source **+ its rationale no longer fit comfortably in one agent context** for a
+     fresh re-read each session.
+  *(Soft proxy when the above are ambiguous: ~10 KLOC, language-adjusted.)*
+  Tier 1 machinery: sealed Charter + State/Log split (one `HANDOFF` + one `LOG`),
+  self-sufficient log events, causal cursor, crash recovery. **Single unit.**
+- **Tier 1 → Tier 2 — by scale.** Enter **Tier 2 — Federation** if **any**:
+  1. **>50 KLOC** (`cloc`/`scc`, language-adjusted, soft/owner-calibratable);
+  2. **≥2 governance units** (independently deployed services / separate team or on-call /
+     cross-unit API-or-schema contracts that must be negotiated) — size-independent;
+  3. **concurrent overlapping sessions or branches** on one unit.
+  Tier 2 machinery: Tier 1 + partitioning, cross-unit decisions, federation, full lifecycle.
+
+**Carried from DLF.** Adopt a higher tier, never lower. **Mixed-tier units:** each unit
+gates on its own signals; a Tier-0 unit inside a Tier-2 repo keeps a minimal
+`HANDOFF`+`LOG` stub so it joins the ancestor chain.
+
+**Why hybrid.** The standard exists to solve **session-continuity** and **concurrency**,
+not raw size — so the 0→1 boundary (does this project even need durable state?) is
+anchored on those observable triggers, not on a KLOC line DLF itself calls "soft" and
+"not a citable cutoff." Scale (LOC + unit count) only governs the 1→2 split, where it is
+the genuinely relevant signal (when does one unit become a federation?).
