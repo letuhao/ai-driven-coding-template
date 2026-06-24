@@ -7,6 +7,7 @@ This is **Dimension 3**.
 loom/          the workflow substrate — gate/ (state machine + pre-commit enforcement)
 warp/          parallel-execution assets — slice manifest + worktree/slice scripts
 raid/          autonomous-coordinator assets — cycle log, briefs, quota, active-task
+contracts/     contract-first interfaces (opt-in) — openapi-spectral + gRPC/async/graphql stubs
 ci-cd/         github-actions/, gitlab-ci/, ... pipeline presets
 devcontainers/ .devcontainer presets for reproducible environments
 git/           branching models (trunk-based, gitflow), hooks, commit conventions

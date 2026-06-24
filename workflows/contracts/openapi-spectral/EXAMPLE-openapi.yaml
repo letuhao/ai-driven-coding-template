@@ -1,0 +1,45 @@
+# Minimal example contract that passes the bundled .spectral.yaml ruleset.
+# Copy to contracts/api/<service>/v1/openapi.yaml and edit. <...> = author-time blanks.
+openapi: 3.0.3
+info:
+  title: <service-name> API
+  version: 1.0.0
+  description: <one line — what this service exposes>
+servers:
+  - url: https://api.example.com/<service>/v1
+    description: <environment>
+tags:
+  - name: orders
+    description: Order operations
+paths:
+  /orders/{orderId}:
+    get:
+      operationId: getOrder
+      tags: [orders]
+      summary: Fetch one order by id
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "404":
+          description: Not found
+components:
+  schemas:
+    Order:
+      type: object
+      required: [id, status]
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum: [pending, paid, shipped]

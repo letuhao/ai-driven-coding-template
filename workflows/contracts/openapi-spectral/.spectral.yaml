@@ -1,0 +1,21 @@
+# Spectral ruleset for OpenAPI contracts. Place at contracts/.spectral.yaml in a
+# project; run `spectral lint contracts/api/**/openapi.yaml`.
+# Sensible defaults — tighten or relax per project.
+extends: ["spectral:oas"]
+
+rules:
+  # Every operation must be addressable + categorized (these drive codegen + docs).
+  operation-operationId: error
+  operation-operationId-unique: error
+  operation-tags: error
+
+  # Prose hygiene we don't want to block scaffolding on — turn on as the API matures.
+  operation-description: warn
+  info-contact: off
+  info-license: off
+
+  # Useful guards for a real API surface.
+  oas3-api-servers: warn          # declare server URLs
+  no-$ref-siblings: error         # a $ref with siblings is silently ignored — a real bug
+  duplicated-entry-in-enum: error
+  path-params: error              # every {param} is defined, and vice versa

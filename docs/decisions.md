@@ -118,6 +118,27 @@ the genuinely relevant signal (when does one unit become a federation?).
 
 ---
 
+## ADR-010 — Contracts: opt-in, multi-preset, "contract-first" is the principle
+
+**Decision.** Model `workflows/contracts/` as an **opt-in, multi-preset** dimension. The
+generalizable thing is the **principle**, not the tool: a versioned interface schema +
+a linter + a home, as the single source of truth between producer and consumer, frozen
+before code. OpenAPI + Spectral is the **REST preset** (shipped, runnable); Protobuf+buf
+(gRPC), AsyncAPI (events), and GraphQL SDL are **sibling presets** (stubbed, added on demand).
+
+A recipe includes a contracts preset **only when the project exposes a cross-boundary API**,
+and it is most warranted at **Tier 2** (≥2 governance units with negotiated contracts —
+ADR-007). CLI/library/frontend-only/single-unit recipes omit it.
+
+**Why.** OpenAPI+Spectral is **not universal** — it is REST-specific; gRPC/events/GraphQL/CLI
+need other (or no) contracts. Forcing it on every project would be wrong. But the *contract-first*
+principle generalizes, and it is the same idea as `/warp`'s frozen interface and the paperwork
+standard's shared-artifact-in-nearest-common-ancestor — the cross-boundary agreement surface
+that makes concurrent multi-module work safe. So: ship the common preset, name the principle,
+gate inclusion on actual need.
+
+---
+
 ## ADR-009 — Workflow gate is a generic engine + per-project config
 
 **Decision.** Ship one **project-agnostic** `workflow-gate` engine plus a single

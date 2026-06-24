@@ -36,6 +36,22 @@ Gate the paperwork/governance standard by tier (see
 Adopt higher, never lower. In a multi-unit (Tier 2) repo, a small unit still keeps a
 minimal `HANDOFF`+`LOG` stub.
 
+## Contracts — only if you expose a cross-boundary interface
+
+Contracts ([`workflows/contracts/`](../workflows/contracts/)) are **opt-in** ([ADR-010](decisions.md)),
+not universal. Include a preset only when the answer below is yes; pick by wire format.
+
+| Your project | Contracts? | Preset |
+|---|---|---|
+| REST/HTTP service consumed by others | yes | `openapi-spectral` |
+| gRPC service | yes | `protobuf-buf` (stub) |
+| Event/queue producer + consumers | yes | `asyncapi` (stub) |
+| GraphQL API | yes | `graphql` (stub) |
+| CLI, library, frontend-only, single-unit app | **no** | — |
+
+Most warranted at **Tier 2** (≥2 governance units with negotiated contracts). A single-unit
+Tier-1 service with no external consumers can defer it.
+
 ## Start simple
 
 If unsure, take the **minimal path**: a single-language `monolith` recipe with
