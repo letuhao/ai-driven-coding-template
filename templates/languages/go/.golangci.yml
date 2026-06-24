@@ -1,0 +1,12 @@
+# golangci-lint config — a sane default set. Run: golangci-lint run
+linters:
+  enable:
+    - govet
+    - staticcheck
+    - errcheck
+    - ineffassign
+    - unused
+    - gofmt
+    - goimports
+run:
+  timeout: 3m

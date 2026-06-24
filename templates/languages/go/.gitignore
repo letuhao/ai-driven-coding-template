@@ -1,0 +1,13 @@
+# Secrets — never commit real env files
+.env
+.env.*
+!.env.example
+
+# Build output
+/bin/
+*.exe
+*.test
+*.out
+
+# Go
+vendor/

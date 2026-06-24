@@ -4,10 +4,10 @@ Minimal, idiomatic starting points for source code. This is **Dimension 1**.
 
 ```
 languages/   minimal, idiomatic per-language starts (no architecture opinion)
-  python/
-  typescript/
-  go/
-  rust/
+  go/          shipped — go.mod, test, golangci, Makefile  (verified: build+test pass)
+  typescript/  shipped — strict ESM, vitest, eslint, prettier  (verified: JSON; build deferred to CI)
+  python/      shipped — src layout, ruff, pytest  (verified: test pass)
+  rust/        planned
 stacks/      opinionated full-stack combos
   nextjs-supabase/
   fastapi-postgres/
