@@ -118,6 +118,30 @@ the genuinely relevant signal (when does one unit become a federation?).
 
 ---
 
+## ADR-009 — Workflow gate is a generic engine + per-project config
+
+**Decision.** Ship one **project-agnostic** `workflow-gate` engine plus a single
+per-project `workflow.config.json` (or `.yaml` when PyYAML is present). The engine code is
+byte-identical across projects; everything project-specific lives in config:
+
+- `module_globs` — which path prefixes count as independently-deployed modules (replaces the
+  source's hardcoded `services/<name>/` cross-service detection);
+- `paths.audit` — where the audit log lives;
+- `verify.smoke_tokens` / `verify.cross_module_smoke` — the live-smoke soft-gate policy;
+- `integrations.lessons_store_cmd` / `guardrails_cmd` — **optional, pluggable** commands
+  (replace the source's hardcoded ContextHub/mcp-query bridge); `null` ⇒ no-op.
+
+The engine is a **single zero-dependency Python script** (no assumption about the project's
+own language), config is **JSON-canonical** (stdlib, runs anywhere; YAML accepted if PyYAML
+is installed), and it works **zero-config** with sensible defaults.
+
+**Why.** "Any project can use it" requires that adopting the toolkit means *writing a config
+file, not editing engine code*. Externalizing module boundaries + integrations behind a
+config is what makes the same gate run on a Go monorepo, a TS app, or a Python service
+unchanged. JSON + stdlib keeps the zero-dependency, runs-anywhere guarantee.
+
+---
+
 ## ADR-008 — DLF Paperwork Standard ships as `experimental`
 
 **Decision.** The harvested DLF Paperwork Standard ships with maturity

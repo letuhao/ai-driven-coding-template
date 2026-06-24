@@ -5,9 +5,18 @@ it classifies task size, tracks the current phase, records completion evidence, 
 pre-commit hook) blocks commits that skip VERIFY / POST-REVIEW / SESSION. `/loom`, `/warp`,
 and `/raid` all drive the same gate.
 
-This entry specifies the **contract**, so it can be implemented in any language. (Reference
-implementation to be ported as a cross-platform script — prefer one runtime, e.g. `python`,
-to sidestep shell-shim issues on Windows.)
+A runnable, **project-agnostic** reference engine ships here: [`workflow-gate.py`](workflow-gate.py)
+— one zero-dependency Python script (stdlib only; no assumption about the project's own
+language). It works **zero-config**, or reads an optional per-project
+[`workflow.config.json`](workflow.config.example.json) (YAML accepted if PyYAML is installed).
+The engine is **identical across projects**; only the config differs ([ADR-009](../../../docs/decisions.md)).
+
+```bash
+python workflow-gate.py size M 3 4 0 85     # classify (logic=4, side_effects=0, context=85%)
+python workflow-gate.py phase build         # enter a phase (refuses illegal jumps)
+python workflow-gate.py complete verify "ran suite, 42 pass"
+python workflow-gate.py status
+```
 
 ## State file
 
@@ -38,11 +47,26 @@ gate amaw-enable [task-slug]                                            # flip t
 2. **Pre-commit hook** — blocks a commit when VERIFY / POST-REVIEW / SESSION evidence is
    missing for the current effort.
 
-## Generalize / strip (when porting from the source repo)
+## Per-project config (the only thing that changes per project)
 
-- Replace `services/<name>/` cross-service detection with a configurable
-  **module-boundary glob** (which path prefixes count as independently deployed units).
-- The optional **lessons store** bridge (RETRO `add_lesson`) is pluggable — default to
-  appending a note in the handoff when no store is configured.
-- Parameterize artifact paths (handoff, specs, plans, audit log) via the project's config,
-  defaulting to the [document taxonomy](../../../documents/taxonomy/README.md).
+```json
+{
+  "module_globs": ["services/*", "packages/*", "apps/*"],
+  "paths": { "audit": "docs/audit/AUDIT_LOG.jsonl" },
+  "verify": { "cross_module_smoke": true, "smoke_tokens": ["live smoke", "live infra unavailable"] },
+  "integrations": { "lessons_store_cmd": null, "guardrails_cmd": null }
+}
+```
+
+- `module_globs` — which path prefixes count as independently-deployed modules (generalizes
+  the source's hardcoded `services/<name>/` cross-module smoke detection).
+- `integrations.lessons_store_cmd` / `guardrails_cmd` — **optional, pluggable** shell commands;
+  `null` ⇒ no-op (the engine never depends on them). A configured lessons command is invoked at
+  RETRO as `<cmd> --title … --content … --tags …`.
+- The scaffolder fills this file per project (placeholders where useful); the engine code is
+  never edited.
+
+## Still to port (separate scripts)
+
+The `slices` subcommand delegates to `workflows/warp/slice-manifest-validate.py`, and the raid
+cycle-helper/quota scripts are specified as contracts in their READMEs — not yet implemented.

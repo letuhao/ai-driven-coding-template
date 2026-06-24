@@ -1,0 +1,19 @@
+{
+  "_comment": "Copy to your repo root as workflow.config.json and edit. The gate engine is identical across projects; only this file changes. The gate also runs zero-config with these same values as defaults. YAML (workflow.config.yaml) is accepted too if PyYAML is installed.",
+
+  "module_globs": ["services/*", "packages/*", "apps/*"],
+
+  "paths": {
+    "audit": "docs/audit/AUDIT_LOG.jsonl"
+  },
+
+  "verify": {
+    "cross_module_smoke": true,
+    "smoke_tokens": ["live smoke", "live-smoke", "live infra unavailable"]
+  },
+
+  "integrations": {
+    "lessons_store_cmd": null,
+    "guardrails_cmd": null
+  }
+}
